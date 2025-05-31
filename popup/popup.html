@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Search - Chinchilla</title>
+  <link rel="stylesheet" href="bulma.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    :root {
+      --select-bg: white;
+      --select-border: #dbdbdb;
+      --select-hover-bg: #f5f5f5;
+      --select-selected-bg: #f0f0f0;
+      --select-text: #363636;
+      --select-hover-border: #b5b5b5;
+    }
+
+    /* Dark mode */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --select-bg: #2d2d2d;
+        --select-border: #363636;
+        --select-hover-bg: #4a4a4a;
+        --select-selected-bg: #363636;
+        --select-text: #e0e0e0;
+        --select-hover-border: #6a6a6a;
+      }
+
+      html {
+        background-color: #4a4a4a;
+      }
+
+      body {
+        background-color: #4a4a4a;
+        color: #e0e0e0;
+      }
+
+      .title {
+        color: #e0e0e0 !important;
+      }
+
+      .label {
+        color: #e0e0e0 !important;
+      }
+
+      .input {
+        background-color: #2d2d2d !important;
+        border-color: #363636 !important;
+        color: #e0e0e0 !important;
+      }
+
+      .input:focus {
+        border-color: #6a6a6a !important;
+        box-shadow: 0 0 0 0.125em rgba(255, 255, 255, 0.1) !important;
+      }
+
+      .button {
+        background-color: #4a4a4a !important;
+        color: #e0e0e0 !important;
+      }
+
+      .button:hover {
+        background-color: #363636 !important;
+      }
+
+      .button.is-success {
+        background-color: #2e7d32 !important;
+      }
+
+      .button.is-success:hover {
+        background-color: #388e3c !important;
+      }
+
+      .button.is-info {
+        background-color: #1976d2 !important;
+      }
+
+      .button.is-info:hover {
+        background-color: #1e88e5 !important;
+      }
+
+      .button.is-danger {
+        background-color: #d32f2f !important;
+      }
+
+      .button.is-danger:hover {
+        background-color: #e53935 !important;
+      }
+    }
+    
+    .custom-select {
+      position: relative;
+      width: 100%;
+    }
+
+    .select-trigger {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--select-border);
+      border-radius: 4px;
+      background-color: var(--select-bg);
+      color: var(--select-text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .select-trigger:hover {
+      border-color: var(--select-hover-border);
+    }
+
+    .select-options {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: var(--select-bg);
+      border: 1px solid var(--select-border);
+      border-radius: 4px;
+      margin-top: 4px;
+      z-index: 10;
+      color: var(--select-text);
+    }
+
+    .select-options.show {
+      display: block;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .select-option {
+      padding: 8px 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .select-option:hover {
+      background-color: var(--select-hover-bg);
+    }
+
+    .select-option i {
+      width: 20px;
+      text-align: center;
+    }
+
+    .select-option.selected {
+      background-color: var(--select-selected-bg);
+    }
+
+    /* Dark mode icon color */
+    @media (prefers-color-scheme: dark) {
+      .select-option i {
+        color: #e0e0e0;
+      }
+      
+      .select-trigger i.fa-chevron-down {
+        color: #e0e0e0;
+      }
+    }
+
+    .option-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-grow: 1;
+    }
+
+    .favorite-icon {
+      cursor: pointer;
+      color: #ffd700;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+    }
+
+    .favorite-icon:hover {
+      opacity: 1;
+    }
+
+    .favorite-icon.fas {
+      opacity: 1;
+    }
+
+    .select-section-title {
+      padding: 8px 12px;
+      font-size: 0.8em;
+      color: var(--select-text);
+      opacity: 0.7;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background-color: var(--select-border);
+      margin: 4px 0;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .favorite-icon {
+        color: #ffd700;
+      }
+    }
+  </style>
+  
+</head>
+<body>
+  <div class="container p-3">
+    
+    <h1 class="title" style="display: flex; align-items: center;">
+      <img src="../images/default_icon2.png" alt="Quick Search Icon" style="width: 32px; height: 32px; margin-right: 5px;">
+      Quick Search
+    </h1>
+
+    <div class="field">
+      <!-- <label class="label">Search Engine</label> -->
+      <div class="custom-select">
+        <div class="select-trigger" id="selectTrigger">
+          <div class="option-content">
+            <i class="fab fa-google fa-lg"></i>
+            <span>Google</span>
+          </div>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="select-options" id="selectOptions">
+          <!-- Favorites section -->
+          <div class="favorites-section" id="favoritesSection" style="display: none;">
+            <div class="select-section-title">Your Favorites</div>
+            <div id="favoriteEngines"></div>
+            <hr class="dropdown-divider">
+          </div>
+          
+          <!-- All search engines -->
+          <div class="select-section-title">Search Engines</div>
+          <div id="allEngines">
+
+            <div class="select-option" data-value="google">
+              <div class="option-content">
+                <i class="fab fa-google fa-lg"></i>
+                <span>Google</span>
+              </div>
+              <i class="far fa-star favorite-icon" data-engine="google"></i>
+            </div>
+
+            <div class="select-option" data-value="bing">
+              <div class="option-content">
+                <i class="fab fa-microsoft fa-lg"></i>
+                <span>Microsoft Bing</span>
+              </div>
+              <i class="far fa-star favorite-icon" data-engine="bing"></i>
+            </div>
+
+            <div class="select-option" data-value="yahoo">
+              <div class="option-content">
+                <i class="fab fa-yahoo fa-lg"></i>
+                <span>Yahoo</span>
+              </div>
+              <i class="far fa-star favorite-icon" data-engine="yahoo"></i>
+            </div>
+
+            <div class="select-option" data-value="baidu">
+              <div class="option-content">
+                <!-- <i class="fas fa-b fa-lg"></i> -->
+                <img width="20" height="20" src="https://img.icons8.com/color/20/baidu.png"/>
+                <span>Baidu</span>
+              </div>
+              <i class="far fa-star favorite-icon" data-engine="baidu"></i>
+            </div>
+
+            <div class="select-option" data-value="yandex">
+              <div class="option-content">
+                <!-- <i class="fas fa-y fa-lg"></i> -->
+                <img width="20" height="20" src="https://img.icons8.com/fluency/20/yandex-international.png"/>
+                <span>Yandex</span>
+              </div>
+              <i class="far fa-star favorite-icon" data-engine="yandex"></i>
+            </div>
+
+            <div class="select-option" data-value="duckduckgo">
+              <div class="option-content">
+                <!-- <i class="fas fa-duck"></i> -->
+                <img width="20" height="20" src="https://img.icons8.com/color/20/duckduckgo--v1.png"/>
+                <span>DuckDuckGo</span>
+              </div>
+              <i class="far fa-star favorite-icon" data-engine="duckduckgo"></i>
+            </div>
+
+            <div class="select-option" data-value="ask">
+              <div class="option-content">
+                <!-- <i class="fas fa-question-circle fa-lg"></i> -->
+                <img width="20" height="20" src="https://www.ask.com/wp-content/themes/ask-2022/assets/images/site-logo.svg"/>
+                <span>Ask.com</span>
+              </div>
+              <i class="far fa-star favorite-icon" data-engine="ask"></i>
+            </div>
+
+            <div class="select-option" data-value="ecosia">
+              <div class="option-content">
+                <img width="20" height="20" src="https://play-lh.googleusercontent.com/Ric37SXVuhw-1uK7TzgUvERNCxOMg9WvjNnCfbzQ4tUZgvzDj-bY6RIfEdaAnltr=s188-rw"/>
+                <span>Ecosia</span>
+              </div>
+              <i class="far fa-star favorite-icon" data-engine="ecosia"></i>
+            </div>
+
+            <div class="select-option" data-value="wikipedia">
+              <div class="option-content">
+                <i class="fa-brands fa-wikipedia-w fa-sm"></i>
+                <span>Wikipedia</span>
+              </div>
+              <i class="far fa-star favorite-icon" data-engine="wikipedia"></i>
+            </div>
+
+            <div class="select-option" data-value="youtube">
+              <div class="option-content">
+                <i class="fa-brands fa-youtube" style="color: #ff0000;"></i>
+                <span>Youtube</span>
+              </div>
+              <i class="far fa-star favorite-icon" data-engine="youtube"></i>
+            </div>
+
+            <div class="select-option" data-value="naver">
+              <div class="option-content">
+                <img width="20" height="20" src="https://play-lh.googleusercontent.com/gJZYXTPS_9AJYJfzRj1tT8IRMQ7rerhhlYmXSVyt8bV_gouL3kW46d_zY6VLnreyMA=w480-h960-rw"/>
+                <span>Naver</span>
+              </div>
+              <i class="far fa-star favorite-icon" data-engine="naver"></i>
+            </div>
+
+            <div class="select-option" data-value="daum">
+              <div class="option-content">
+                <img width="20" height="20" src="https://t1.daumcdn.net/liveboard/daumtop_notice/20250113/daum.png";"/>
+                <span>Daum</span>
+              </div>
+              <i class="far fa-star favorite-icon" data-engine="daum"></i>
+            </div>
+
+          </div>
+        </div>
+        <input type="hidden" id="site" value="google">
+      </div>
+    </div>
+
+    <div class="field">
+      <!-- <label class="label">Search Terms</label> -->
+      <div class="control">
+        <input type="search" class="input" id="searchTerms" style="width: 80%;" placeholder="Search...">
+        <button class="button is-link" id="searchButton" style="width: 10%;">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </div>
+    </div>
+
+
+    <div class="field">
+      <button class="button is-success" id="resetSearchTermsButton" style="width: 25%; margin-top: 10px;">Delete</button>
+
+      <button class="button is-white" id="settings" style="width: 20px; height: 20px; float: right;">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+    </div>
+
+    <div class="field" id="addSearchEngineField" style="display: none; margin-top: 20px;">
+      <h1 class="title">Settings</h1>
+      <div class="field">
+        <label class="label">Engine Name</label>
+        <input type="text" class="input" id="searchEngineName" placeholder="Engine Name">
+      </div>
+      <div class="field">
+        <label class="label">Engine URL</label>
+        <input type="text" class="input" id="searchEngineURL" placeholder="Engine URL">
+      </div>
+      <button class="button is-danger" id="resetSettingsButton" style="margin-top: 10px;">Reset Settings</button>
+      
+    </div>
+
+  </div>
+
+</body>
+
+<script src="popup.js"></script>
+
+</html>

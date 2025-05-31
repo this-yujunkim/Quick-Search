@@ -1,0 +1,25 @@
+{
+  "name": "QuickSearch",
+  "description": "Quick search extension",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": "images/default_icon2.png"
+  },
+  "icons": {
+    "16": "images/default_icon2.png",
+    "32": "images/default_icon2.png",
+    "48": "images/default_icon2.png",
+    "128": "images/default_icon2.png"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "storage",
+    "windows",
+    "tabs"
+  ]
+}
