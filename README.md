@@ -62,7 +62,7 @@
 
 ## 🎨 Design
 
-- Clean, modern layout with visual engine selection.
+- Clean, modern layout using [bulma](https://bulma.io/)
 - Responsive design supporting both light and dark themes.
 - Minimalist icons for quick recognition.
 
