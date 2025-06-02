@@ -14,9 +14,7 @@ const alwaysOpenInNewWindowSwitch = document.getElementById("alwaysOpenInNewWind
 
 // Buttons
 const searchButton = document.getElementById("searchButton");
-const newWindowButton = document.getElementById("newWindowButton");
 const settingsButton = document.getElementById("settings");
-const resetSearchTermsButton = document.getElementById("resetSearchTermsButton");
 const favoritesSection = document.getElementById('favoritesSection');
 
 // 2. Utility Functions
@@ -319,21 +317,6 @@ searchButton.addEventListener('click', () => {
 // Show hint when search button is hovered
 searchButton.addEventListener('mouseover', () => {
     searchButton.title = "Search in new tab";
-});
-
-// Reset search terms when reset search terms button is clicked
-resetSearchTermsButton.addEventListener('click', () => {
-    chrome.storage.local.remove("searchTerm", () => {
-        if (chrome.runtime.lastError) {
-            console.error(chrome.runtime.lastError);
-        }
-    })
-    searchTermElement.value = null;
-});
-
-// Show hint when reset search terms button is hovered
-resetSearchTermsButton.addEventListener('mouseover', () => {
-    resetSearchTermsButton.title = "Delete search terms";
 });
 
 // Open settings field when settings button is clicked
