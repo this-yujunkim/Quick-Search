@@ -1,21 +1,25 @@
-// Elements
-const searchTermElement = document.getElementById("searchTerms")
-const siteElement = document.getElementById("site")
-const selectTrigger = document.getElementById("selectTrigger")
-const selectOptions = document.getElementById("selectOptions")
-
-
-// Buttons
-const searchButton = document.getElementById("searchButton")
-const newWindowButton = document.getElementById("newWindowButton")
-const settingsButton = document.getElementById("settings")
-const resetSettingsButton = document.getElementById("resetSettingsButton")
-
-// Favorites management
-const favoritesSection = document.getElementById('favoritesSection');
+// 1. DOM Elements & Constants
+const searchTermElement = document.getElementById("searchTerms");
+const searchEngineElement = document.getElementById("searchEngine");
+const selectTrigger = document.getElementById("selectTrigger");
+const selectOptions = document.getElementById("selectOptions");
 const favoriteEngines = document.getElementById('favoriteEngines');
 const allEngines = document.getElementById('allEngines');
 
+// Settings
+const settingsField = document.getElementById("settingsField");
+const saveDefaultSearchEngineSwitch = document.getElementById("saveDefaultSearchEngineSwitch");
+const saveSearchTermsSwitch = document.getElementById("saveSearchTermsSwitch");
+const alwaysOpenInNewWindowSwitch = document.getElementById("alwaysOpenInNewWindowSwitch");
+
+// Buttons
+const searchButton = document.getElementById("searchButton");
+const newWindowButton = document.getElementById("newWindowButton");
+const settingsButton = document.getElementById("settings");
+const resetSearchTermsButton = document.getElementById("resetSearchTermsButton");
+const favoritesSection = document.getElementById('favoritesSection');
+
+// 2. Utility Functions
 /**
  * Load favorites
  * @returns {string[]} The favorites
@@ -33,6 +37,32 @@ const saveFavorites = async (favorites) => {
     await chrome.storage.local.set({ favoriteEngines: favorites });
 };
 
+/**
+ * Create search URL function
+ * @param {string} searchEngine - The search engine to use
+ * @param {string} searchTerm - The search term to use
+ * @returns {string} The search URL
+ */
+const createSearchUrl = (searchEngine, searchTerm) => {
+    const searchPatterns = {
+        google: `https://www.google.com/search?q=${encodeURIComponent(searchTerm)}`,
+        bing: `https://www.bing.com/search?q=${encodeURIComponent(searchTerm)}`,
+        yahoo: `https://search.yahoo.com/search?p=${encodeURIComponent(searchTerm)}`,
+        baidu: `https://www.baidu.com/s?wd=${encodeURIComponent(searchTerm)}`,
+        yandex: `https://yandex.com/search/?text=${encodeURIComponent(searchTerm)}`,
+        duckduckgo: `https://duckduckgo.com/?q=${encodeURIComponent(searchTerm)}`,
+        ask: `https://www.ask.com/web?q=${encodeURIComponent(searchTerm)}`,
+        ecosia: `https://www.ecosia.org/search?q=${encodeURIComponent(searchTerm)}`,
+        wikipedia: `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(searchTerm)}`,
+        youtube: `https://www.youtube.com/results?search_query=${encodeURIComponent(searchTerm)}`,
+        naver: `https://search.naver.com/search.naver?query=${encodeURIComponent(searchTerm)}`,
+        daum: `https://search.daum.net/search?q=${encodeURIComponent(searchTerm)}`
+    };
+
+    return searchPatterns[searchEngine] || searchPatterns.google;
+}
+
+// 3. Feature Functions
 /**
  * Toggle favorite status
  * @param {string} engine - The engine to toggle
@@ -52,44 +82,20 @@ const toggleFavorite = async (engine) => {
 };
 
 /**
- * Create search URL function
- * @param {string} site - The search engine to use
- * @param {string} searchTerm - The search term to use
- * @returns {string} The search URL
- */
-const createSearchUrl = (site, searchTerm) => {
-    const searchPatterns = {
-        google: `https://www.google.com/search?q=${encodeURIComponent(searchTerm)}`,
-        bing: `https://www.bing.com/search?q=${encodeURIComponent(searchTerm)}`,
-        yahoo: `https://search.yahoo.com/search?p=${encodeURIComponent(searchTerm)}`,
-        baidu: `https://www.baidu.com/s?wd=${encodeURIComponent(searchTerm)}`,
-        yandex: `https://yandex.com/search/?text=${encodeURIComponent(searchTerm)}`,
-        duckduckgo: `https://duckduckgo.com/?q=${encodeURIComponent(searchTerm)}`,
-        ask: `https://www.ask.com/web?q=${encodeURIComponent(searchTerm)}`,
-        ecosia: `https://www.ecosia.org/search?q=${encodeURIComponent(searchTerm)}`,
-        wikipedia: `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(searchTerm)}`,
-        youtube: `https://www.youtube.com/results?search_query=${encodeURIComponent(searchTerm)}`,
-        naver: `https://search.naver.com/search.naver?query=${encodeURIComponent(searchTerm)}`,
-        daum: `https://search.daum.net/search?q=${encodeURIComponent(searchTerm)}`
-    };
-
-    return searchPatterns[site] || searchPatterns.google;
-}
-
-/**
  * Perform search
  * @param {boolean} inNewWindow - Whether to search in a new window
  */
 const performSearch = (inNewWindow = false) => {
     const prefs = {     // Save preferences
-        site: siteElement.value,
-        searchTerm: searchTermElement.value
-    }
-    
-    if (prefs.site && prefs.searchTerm) {
-        const url = createSearchUrl(prefs.site, prefs.searchTerm);
+        searchEngine: searchEngineElement.value,
+        searchTerm: searchTermElement.value,
+        alwaysOpenInNewWindow: alwaysOpenInNewWindowSwitch.checked
+    };
+
+    if (prefs.searchEngine && prefs.searchTerm) {
+        const url = createSearchUrl(prefs.searchEngine, prefs.searchTerm);
         chrome.runtime.sendMessage({
-            event: inNewWindow ? 'onSearchInNewWindow' : 'onSearch',
+            event: alwaysOpenInNewWindowSwitch.checked || inNewWindow ? 'onSearchInNewWindow' : 'onSearch',
             url: url,
             prefs: prefs
         });
@@ -184,7 +190,7 @@ const updateFavoriteEnginesDisplay = async () => {
                 }
             }
             
-            siteElement.value = value;
+            searchEngineElement.value = value;
             selectOptions.classList.remove('show');
             
             // Update selected state
@@ -194,7 +200,7 @@ const updateFavoriteEnginesDisplay = async () => {
             originalOption.classList.add('selected');
             
             // Save to storage
-            chrome.storage.local.set({ site: value });
+            chrome.storage.local.set({ searchEngine: value });
         });
     });
 };
@@ -227,6 +233,7 @@ const initSelectOption = () => {
     });
 };
 
+// 4. Event Handlers
 // Initialize favorites
 document.addEventListener('DOMContentLoaded', async () => {
     await updateFavoriteEnginesDisplay();
@@ -263,7 +270,7 @@ document.addEventListener('click', (e) => {
         }
 
         // Update hidden input
-        siteElement.value = value;
+        searchEngineElement.value = value;
         
         // Update selected state
         document.querySelectorAll('.select-option').forEach(opt => {
@@ -275,7 +282,7 @@ document.addEventListener('click', (e) => {
         selectOptions.classList.remove('show');
         
         // Save to storage
-        chrome.storage.local.set({ site: value });
+        chrome.storage.local.set({ searchEngine: value });
     }
 });
 
@@ -291,8 +298,7 @@ searchTermElement.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
         e.preventDefault(); // Prevent default form submission
         if (e.ctrlKey || e.metaKey) {
-            // Ctrl/Cmd + Enter: Search in new window
-            
+            // Ctrl/Cmd + Enter: Search in new window 
             performSearch(true);
         } else {
             // Just Enter: Search in current tab
@@ -318,9 +324,8 @@ searchButton.addEventListener('mouseover', () => {
 // Reset search terms when reset search terms button is clicked
 resetSearchTermsButton.addEventListener('click', () => {
     chrome.storage.local.remove("searchTerm", () => {
-        var error = chrome.runtime.lastError;
-        if (error) {
-            console.error(error);
+        if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
         }
     })
     searchTermElement.value = null;
@@ -331,59 +336,82 @@ resetSearchTermsButton.addEventListener('mouseover', () => {
     resetSearchTermsButton.title = "Delete search terms";
 });
 
+// Open settings field when settings button is clicked
 settingsButton.addEventListener('click', () => {
-    if (addSearchEngineField.style.display === 'block') {
-        addSearchEngineField.style.display = 'none';
+    if (settingsField.style.display === 'block') {
+        settingsField.style.display = 'none';
     } else {
-        addSearchEngineField.style.display = 'block';
+        settingsField.style.display = 'block';
     }
 });
 
+// Show hint when settings button is hovered
 settingsButton.addEventListener('mouseover', () => {
     settingsButton.title = "Settings";
 });
 
-// Reset settings when reset settings button is clicked
-resetSettingsButton.addEventListener('click', async () => {
-    chrome.storage.local.remove(["site", "searchTerm"], () => {
-        var error = chrome.runtime.lastError;
-        if (error) {
-            console.error(error);
+// save settings for saving default search engine when switch is toggled
+saveDefaultSearchEngineSwitch.addEventListener('click', (e) => {
+    const isChecked = e.target.checked;
+    chrome.storage.local.set({ saveDefaultSearchEngine: isChecked }, () => {
+        console.log("Default search engine preference saved:", isChecked);
+        if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
         }
     });
-    siteElement.value = null;
-    searchTermElement.value = null;
-    
-    // Reset option
-    initSelectOption();
-    
-    // Reset favorite engines
-    const favoriteEngines = await loadFavorites();
-    for (const engine of favoriteEngines) {
-        await toggleFavorite(engine);
-    }
+});
 
-    // Reset display of all options
-    document.querySelectorAll('#allEngines .select-option').forEach(option => {
-        option.style.display = 'flex';
+saveSearchTermsSwitch.addEventListener('click', (e) => {
+    const isChecked = e.target.checked;
+    chrome.storage.local.set({ saveSearchTerms: isChecked }, () => {
+        console.log("Save search terms preference saved:", isChecked);
+        if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
+        }
     });
 });
 
-// Show hint when reset all button is hovered
-resetSettingsButton.addEventListener('mouseover', () => {
-    resetSettingsButton.title = "Reset all settings: site, search terms, and favorite engines";
+alwaysOpenInNewWindowSwitch.addEventListener('click', (e) => {
+    const isChecked = e.target.checked;
+    chrome.storage.local.set({ alwaysOpenInNewWindow: isChecked }, () => {
+        console.log("Always open in new window preference saved:", isChecked);
+        if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
+        }
+    });
 });
 
-// Load saved preferences
-chrome.storage.local.get(["site", "searchTerm"], (result) => {
-    const {site, searchTerm} = result;
+// 5. Initialization
+chrome.storage.local.get(["saveDefaultSearchEngine", "saveSearchTerms", "alwaysOpenInNewWindow", "searchEngine", "searchTerm"], (result) => {
+    const {saveDefaultSearchEngine, saveSearchTerms, alwaysOpenInNewWindow, searchEngine, searchTerm} = result;
 
-    if (site) {
+    if (saveDefaultSearchEngine) {
+        saveDefaultSearchEngineSwitch.checked = saveDefaultSearchEngine;
+    }
+    else {
+        saveDefaultSearchEngineSwitch.checked = false;
+    }
+
+    if (saveSearchTerms) {
+        saveSearchTermsSwitch.checked = saveSearchTerms;
+    }
+    else {
+        saveSearchTermsSwitch.checked = false;
+    }
+
+    if (alwaysOpenInNewWindow) {
+        alwaysOpenInNewWindowSwitch.checked = alwaysOpenInNewWindow;
+    } 
+    else {
+        alwaysOpenInNewWindowSwitch.checked = false;
+    }
+
+    if (searchEngine && saveDefaultSearchEngine) {
         // Update hidden input
-        siteElement.value = site;
+        searchEngineElement.value = searchEngine;
         
         // Update trigger display
-        const selectedOption = document.querySelector(`.select-option[data-value="${site}"]`);
+        const selectedOption = document.querySelector(`.select-option[data-value="${searchEngine}"]`);
         if (selectedOption) {
             const iconElement = selectedOption.querySelector('i, img');
             const textElement = selectedOption.querySelector('span');
@@ -409,8 +437,12 @@ chrome.storage.local.get(["site", "searchTerm"], (result) => {
             selectedOption.classList.add('selected');
         }
     }
+    else {
+        // Reset select option
+        initSelectOption();
+    }   
 
-    if (searchTerm) {
+    if (searchTerm && saveSearchTermsSwitch.checked) {
         searchTermElement.value = searchTerm;
     }
 });
