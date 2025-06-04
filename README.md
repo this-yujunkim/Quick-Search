@@ -6,12 +6,18 @@
 
 ## 📝 About This Project
 
-I wanted to study web programming by working on a real project. But to make a website seemed to hard for me. So I decided to create a Chrome extension, which I thought would be relatively easy. But, I had no idea how to start making Chrome extentions from scratch. So I watched some youtube videos and used AI agents (vibe coded) to make the foundation of the program. 
+I wanted to learn web programming while working on a real-world project. 
+I decided to create a Chrome extension, which I thought would be relatively easy. 
+However, I didn't know how to create a Chrome extension from scratch, 
+so I watched YouTube videos and used AI agents (also known as vibe coding) 
+to create the basis of my program. I hope this project will help me improve 
+my coding and software engineering skills, and make me more interested in CS.
 
 ## 🌟 Main Features
 
 - **Multi-Engine Support**  
-  Search using Google, Bing, Yahoo, Baidu, Yandex, DuckDuckGo, Ask, Ecosia, Wikipedia, YouTube, Naver, Daum, and more.
+  Search using Google, Bing, Yahoo, Baidu, Yandex, DuckDuckGo, Ask, Ecosia,
+  Wikipedia, YouTube, Naver, Daum, and more.
 - **Favorites**  
   Mark your preferred search engines for instant access.
 - **Custom Search UI**  
@@ -32,14 +38,16 @@ I wanted to study web programming by working on a real project. But to make a we
 ## 🚀 How to Use
 
 1. **Install**  
-  Download the extension from the Chrome Web Store (not yet uploaded), or load it as an unpacked extension from this repository.
+  Download the extension from the Chrome Web Store (not yet uploaded), 
+  or load it as an unpacked extension from this repository.
 
 2. **Open the Extension**  
   Click the magnifying glass icon in your Chrome toolbar.
 
 3. **Enter Search Terms**  
   Type your query in the input field.
-  Press `Enter` to search in a new tab, or `Ctrl/Cmd + Enter` to search in a new window.
+  Press `Enter` to search in a new tab, 
+  or `Ctrl/Cmd + Enter` to search in a new window.
 
 4. **Choose a Search Engine**  
    - Click any engine’s icon to search with it.
@@ -55,12 +63,14 @@ I wanted to study web programming by working on a real project. But to make a we
 ## 📚 References & Credits
 
 - **Special Thanks:**  
-  Special thanks to [JerryHacks](https://www.youtube.com/@jerryhacks) for the excellent Chrome extension tutorials and inspiration.
+  Special thanks to [JerryHacks](https://www.youtube.com/@jerryhacks) 
+  for the excellent Chrome extension tutorials and inspiration.
 - **YouTube Playlist (Tutorial/reference):**  
   [How to Make a Chrome Extension - JerryHacks](https://www.youtube.com/playlist?list=PLVrGZCP4x3PRHKbq-gDrSygGHbU4X9pTR)
 - **Code Editor & AI:**  
-  - About half of the code was written using AI agents in [Cursor](https://www.cursor.so/) until first upload.
-  - After upload, I'm trying to use less AI agents for my study.
+  - About half of the code was written using AI agents in [Cursor](https://www.cursor.so/) 
+    until first upload.
+  - I'm trying to use less AI agents to improve my skills.
 
 ---
 
