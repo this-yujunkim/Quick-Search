@@ -1,9 +1,3 @@
-import fetchSearchEngines from "./api/fetchSearchEngines.js";
-
-chrome.runtime.onInstalled.addListener(details => {
-    fetchSearchEngines();
-})
-
 /**
  * @param {string} url - URL to open
  * Opens URL in a new window
